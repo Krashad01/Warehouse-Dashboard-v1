@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="app.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Grow Dashboard</h1>
+        
+        <div class="date" id="currentWeekDate"></div>
+        <div class="box-container">
+            <div class="box">
+                <h3>Sprays</h3>
+                <div id="currentWeekSprays" class="project-list"></div>
+            </div>
+            <div class="box">
+                <h3>Candles</h3>
+                <div id="currentWeekCandles" class="project-list"></div>
+            </div>
+            <div class="box">
+                <h3>Car Fresheners</h3>
+                <div id="currentWeekCarFresheners" class="project-list"></div>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="date" id="nextWeekDate"></div>
+        <div class="box-container">
+            <div class="box">
+                <h3>Sprays</h3>
+                <div id="nextWeekSprays" class="project-list"></div>
+            </div>
+            <div class="box">
+                <h3>Candles</h3>
+                <div id="nextWeekCandles" class="project-list"></div>
+            </div>
+            <div class="box">
+                <h3>Car Fresheners</h3>
+                <div id="nextWeekCarFresheners" class="project-list"></div>
+            </div>
+        </div>
+    </div>
+
+<footer>
+    <a href="manage.html">Manage</a>
+</footer>
+
+    <script>
+        // Set the date for the current and next week
+        const currentWeekDateElem = document.getElementById('currentWeekDate');
+        const nextWeekDateElem = document.getElementById('nextWeekDate');
+        
+        const today = new Date();
+        const firstDayOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
+        const firstDayOfNextWeek = new Date(firstDayOfWeek);
+        firstDayOfNextWeek.setDate(firstDayOfWeek.getDate() + 7);
+        
+        currentWeekDateElem.textContent = `Week of ${firstDayOfWeek.toLocaleDateString()}`;
+        nextWeekDateElem.textContent = `Week of ${firstDayOfNextWeek.toLocaleDateString()}`;
+        
+        // Load and display projects
+        function displayProjects(week) {
+            const projectContainers = {
+                'Sprays': document.getElementById(`${week}WeekSprays`),
+                'Candles': document.getElementById(`${week}WeekCandles`),
+                'CarFresheners': document.getElementById(`${week}WeekCarFresheners`)
+            };
+
+            for (const key in projectContainers) {
+                if (projectContainers.hasOwnProperty(key)) {
+                    projectContainers[key].innerHTML = '';  // Clear existing projects
+                }
+            }
+
+            const projects = JSON.parse(localStorage.getItem(`${week}WeekProjects`)) || [];
+
+            projects.forEach(project => {
+                const projectElement = document.createElement('div');
+                projectElement.className = 'project';
+                projectElement.innerHTML = `<strong>${project.name}</strong> - Due: ${project.dueDate} <br> Details: ${project.details}`;
+                
+                const categoryElement = document.getElementById(`${week}Week${project.category}`);
+                if (categoryElement) {
+                    categoryElement.appendChild(projectElement);
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            displayProjects('current');
+            displayProjects('next');
+        });
+    </script>
+</body>
+</html>
+
